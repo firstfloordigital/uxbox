@@ -184,6 +184,27 @@
             (rx/of (dwc/commit-changes rchanges uchanges {:commit-local? true})
                    (dws/select-shapes (d/ordered-set (:id group))))))))))
 
+(defn rename-component
+  [id new-name]
+  (us/assert ::us/uuid id)
+  (us/assert ::us/string new-name)
+  (ptk/reify ::rename-component
+    ptk/WatchEvent
+    (watch [_ state stream]
+      (let [component (get-in state [:workspace-data :components id])
+
+            rchanges [{:type :mod-component
+                       :id id
+                       :name new-name
+                       :shapes (:shapes component)}]
+
+            uchanges [{:type :mod-component
+                       :id id
+                       :name (:name component)
+                       :shapes (:shapes component)}]]
+
+        (rx/of (dwc/commit-changes rchanges uchanges {:commit-local? true}))))))
+
 (defn delete-component
   [{:keys [id] :as params}]
   (us/assert ::us/uuid id)

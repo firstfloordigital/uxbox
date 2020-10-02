@@ -56,6 +56,12 @@
            (st/emit! (dwl/delete-component {:id (:component-id @state)}))
            (st/emit! (dwl/sync-file nil))))
 
+        on-rename
+        (mf/use-callback
+          (mf/deps state)
+          (fn []
+            (println "rename")))
+
         on-context-menu
         (mf/use-callback
          (fn [component-id]
@@ -99,7 +105,8 @@
          :on-close #(swap! state assoc :menu-open false)
          :top (:top @state)
          :left (:left @state)
-         :options [[(tr "workspace.assets.delete") on-delete]]}])]))
+         :options [[(tr "workspace.assets.rename") on-rename]
+                   [(tr "workspace.assets.delete") on-delete]]}])]))
 
 (mf/defc graphics-box
   [{:keys [file-id local? objects open? on-open on-close] :as props}]
